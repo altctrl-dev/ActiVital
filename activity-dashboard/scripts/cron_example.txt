@@ -1,0 +1,19 @@
+# ActiVital Dashboard - Cron Job Examples
+#
+# Add these lines to your crontab (run 'crontab -e' to edit)
+# Adjust the path to match your actual installation directory
+
+# Example 1: Update statistics every hour
+# 0 * * * * /path/to/ActiVital/activity-dashboard/scripts/update_stats.sh --mode stats-only >> /path/to/ActiVital/logs/scheduler.log 2>&1
+
+# Example 2: Full update (parse logs + compute stats) every 6 hours
+# 0 */6 * * * /path/to/ActiVital/activity-dashboard/scripts/update_stats.sh --mode full >> /path/to/ActiVital/logs/scheduler.log 2>&1
+
+# Example 3: Daily full update at 2 AM
+# 0 2 * * * /path/to/ActiVital/activity-dashboard/scripts/update_stats.sh --mode full >> /path/to/ActiVital/logs/scheduler.log 2>&1
+
+# Example 4: Hourly stats-only update during business hours (9 AM - 6 PM, Monday-Friday)
+# 0 9-18 * * 1-5 /path/to/ActiVital/activity-dashboard/scripts/update_stats.sh --mode stats-only >> /path/to/ActiVital/logs/scheduler.log 2>&1
+
+# Replace /path/to/ActiVital with your actual project path
+# Example: /Users/username/Projects/ActiVital

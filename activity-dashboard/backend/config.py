@@ -5,10 +5,10 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Database configuration
-DATABASE_URL = os.getenv('DATABASE_URL', f'sqlite:///{BASE_DIR}/db/database.db')
+DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://localhost/activital_dashboard')
 
 # Logs directory
-LOGS_DIR = os.getenv('LOGS_DIR', str(BASE_DIR.parent / 'logs'))
+LOGS_DIR = os.getenv('LOGS_DIR', str(BASE_DIR / 'logs'))
 
 # Flask configuration
 class Config:

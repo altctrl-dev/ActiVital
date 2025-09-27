@@ -1,0 +1,35 @@
+# Python
+**/venv/
+**/venv/*
+*.pyc
+__pycache__/
+
+# Node
+**/node_modules/
+frontend/node_modules/
+
+# Env files
+.env
+activity-dashboard/backend/.env
+activity-dashboard/frontend/.env
+
+# DB files
+*.db
+**/database.db
+**/database.db.backup
+
+# Logs
+logs/
+*.log
+
+# Editor/OS
+.vscode/
+.idea/
+.DS_Store
+
+# Build artifacts
+dist/
+build/
+
+# pytest
+.pytest_cache/

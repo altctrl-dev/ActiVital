@@ -11,7 +11,7 @@ class Event(Base):
     timestamp = Column(DateTime, nullable=False)
     username = Column(String(100), nullable=False)
     computer_name = Column(String(100), nullable=False)
-    event_type = Column(String(50), nullable=False)  # Logon, Logoff, Idle Started, Active
+    event_type = Column(String(500), nullable=False)  # Logon, Logoff, Idle Started, Active, Error messages
     timezone = Column(String(50), nullable=False)
 
     def __repr__(self):

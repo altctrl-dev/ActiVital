@@ -1,11 +1,9 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 import os
 
 from config import Config
-from db.models import Event, DailyStats, WeeklyStats, MonthlyStats
 from validators import validate_params, validate_date, validate_week, validate_month, sanitize_username
 from logger import app_logger as logger
 
@@ -16,8 +14,9 @@ app.config.from_object(Config)
 # Initialize CORS
 CORS(app)
 
-# Initialize SQLAlchemy
-db = SQLAlchemy(app)
+# Import and initialize models after app creation
+from flask_models import db, Event, DailyStats, WeeklyStats, MonthlyStats
+db.init_app(app)
 
 @app.route('/users', methods=['GET'])
 def get_users():
@@ -138,4 +137,4 @@ def get_monthly_stats():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5001)

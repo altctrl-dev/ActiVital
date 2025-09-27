@@ -12,12 +12,31 @@ from config import Config
 from db.models import Event
 from db.init_db import init_db
 
-def parse_datetime(date_str):
-    """Parse datetime from CSV format."""
+def parse_datetime(date_str, time_str=None):
+    """Parse datetime from CSV format - handles both combined and separate date/time."""
     try:
-        return pd.to_datetime(date_str)
+        if time_str is not None:
+            # Handle separate Date and Time columns
+            combined = f"{date_str} {time_str}"
+            return pd.to_datetime(combined)
+        else:
+            # Handle combined Timestamp column
+            return pd.to_datetime(date_str)
     except ValueError:
         return None
+
+def normalize_event_type(event_type):
+    """Normalize different event type formats to standard names."""
+    event_mapping = {
+        'Idle': 'Idle Started',
+        'Active': 'Active',
+        'Lock': 'Lock',
+        'Unlock': 'Unlock',
+        'Logon': 'Logon',
+        'Logoff': 'Logoff',
+        'Service Started': 'Service Started'
+    }
+    return event_mapping.get(event_type, event_type)
 
 def get_log_files():
     """Get all CSV log files from the configured logs directory."""
@@ -29,33 +48,67 @@ def parse_log_file(file_path, session):
     """Parse a single log file and insert events into database."""
     try:
         print(f"Parsing file: {file_path}")
-        
+
         # Read CSV file
         df = pd.read_csv(file_path)
-        
-        # Get username from parent directory name
+
+        # Clean column names (remove leading/trailing whitespace)
+        df.columns = df.columns.str.strip()
+
+        # Get username from parent directory name or from CSV data
         username = Path(file_path).parent.name
-        
+
+        # Detect CSV format and normalize column names
+        columns = df.columns.tolist()
+        print(f"CSV columns: {columns}")
+
         # Process each row
         for _, row in df.iterrows():
+            # Handle different CSV formats
+            if 'Timestamp' in columns:
+                # Format 1: Combined timestamp
+                timestamp = parse_datetime(row['Timestamp'])
+                computer_name = row.get('Computer Name', 'Unknown')
+                event_type = normalize_event_type(row.get('Event Type', 'Unknown'))
+                timezone = row.get('Timezone', 'UTC')
+                if 'Username' in columns:
+                    username = row['Username']
+            elif 'Date' in columns and 'Time' in columns:
+                # Format 2: Separate date and time
+                timestamp = parse_datetime(row['Date'], row['Time'])
+                computer_name = row.get('Computer', 'Unknown')
+                event_type = normalize_event_type(row.get('Event', 'Unknown'))
+                timezone = row.get('TimeZone', 'UTC')
+                if 'Username' in columns:
+                    username = row['Username']
+            else:
+                print(f"Unknown CSV format in {file_path}")
+                continue
+
+            if timestamp is None:
+                print(f"Invalid timestamp in row: {row}")
+                continue
+
             # Create Event object
             event = Event(
-                timestamp=parse_datetime(row['Timestamp']),
+                timestamp=timestamp,
                 username=username,
-                computer_name=row['Computer Name'],
-                event_type=row['Event Type'],
-                timezone=row.get('Timezone', 'UTC')  # Default to UTC if not provided
+                computer_name=computer_name,
+                event_type=event_type,
+                timezone=timezone
             )
-            
+
             # Add to session
             session.add(event)
-        
+
         # Commit after each file
         session.commit()
         print(f"Successfully parsed {file_path}")
-        
+
     except Exception as e:
         print(f"Error parsing {file_path}: {str(e)}")
+        import traceback
+        traceback.print_exc()
         session.rollback()
 
 def main():
