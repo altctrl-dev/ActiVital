@@ -1,10 +1,10 @@
-import Dashboard from './components/Dashboard'
+import EnhancedDashboard from './components/EnhancedDashboard'
 import './App.css'
 
 function App() {
   return (
     <div className="app">
-      <Dashboard />
+      <EnhancedDashboard />
     </div>
   )
 }

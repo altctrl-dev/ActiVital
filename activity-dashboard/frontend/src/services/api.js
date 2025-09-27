@@ -41,6 +41,77 @@ class ApiService {
     }
     return await response.json();
   }
+
+  // Advanced Analytics Endpoints
+  async fetchActivityTimeline(username, date) {
+    const response = await fetch(`${API_BASE_URL}/analytics/timeline?user=${encodeURIComponent(username)}&date=${date}`);
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null;
+      }
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  }
+
+  async fetchTeamSummary(date = null) {
+    const url = date
+      ? `${API_BASE_URL}/analytics/team-summary?date=${date}`
+      : `${API_BASE_URL}/analytics/team-summary`;
+
+    const response = await fetch(url);
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null;
+      }
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  }
+
+  async fetchProductivityTrends(username, days = 30) {
+    const response = await fetch(`${API_BASE_URL}/analytics/productivity-trends?user=${encodeURIComponent(username)}&days=${days}`);
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null;
+      }
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  }
+
+  async fetchActivityHeatmap(username, date) {
+    const response = await fetch(`${API_BASE_URL}/analytics/activity-heatmap?user=${encodeURIComponent(username)}&date=${date}`);
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null;
+      }
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  }
+
+  async fetchBreakPatterns(username, date) {
+    const response = await fetch(`${API_BASE_URL}/analytics/break-patterns?user=${encodeURIComponent(username)}&date=${date}`);
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null;
+      }
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  }
+
+  async fetchFocusScore(username, date) {
+    const response = await fetch(`${API_BASE_URL}/analytics/focus-score?user=${encodeURIComponent(username)}&date=${date}`);
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null;
+      }
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  }
 }
 
 export const apiService = new ApiService();
